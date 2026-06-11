@@ -32,9 +32,18 @@ output as **issue comments** (planner/reviewer) or **a branch + PR**
 >    explicitly, and post a new comment (don't edit the old one — the back-and-
 >    forth is the record).
 >
-> Post with `gh issue comment {N} --body "..."`. Do NOT write any code or create
-> branches — your job ends at the plan. Keep it concrete; a vague plan wastes the
-> reviewer's round.
+> Post with a quoted heredoc so your markdown (code fences, backticks, `$`)
+> isn't mangled by the shell:
+>
+> ```bash
+> gh issue comment {N} --body-file - <<'EOF'
+> ## 🗺️ Plan (planning agent)
+> ...
+> EOF
+> ```
+>
+> Do NOT write any code or create branches — your job ends at the plan. Keep it
+> concrete; a vague plan wastes the reviewer's round.
 
 ---
 
@@ -52,9 +61,20 @@ output as **issue comments** (planner/reviewer) or **a branch + PR**
 >    - `**Verdict: APPROVED**` — the plan is sound and ready to implement.
 >    - `**Verdict: CHANGES REQUESTED**` — list what must change.
 >
-> Post with `gh issue comment {N} --body "..."`. Be a genuine skeptic: approving
-> a weak plan is the failure mode to avoid. But don't bikeshed — once the plan is
-> *sound*, approve it; perfection isn't the bar, soundness is.
+> Post with a quoted heredoc so your markdown (code fences, backticks, `$`)
+> isn't mangled by the shell:
+>
+> ```bash
+> gh issue comment {N} --body-file - <<'EOF'
+> ## 🔍 Review (review agent)
+> ...
+> **Verdict: APPROVED**
+> EOF
+> ```
+>
+> Be a genuine skeptic: approving a weak plan is the failure mode to avoid. But
+> don't bikeshed — once the plan is *sound*, approve it; perfection isn't the bar,
+> soundness is.
 
 ---
 

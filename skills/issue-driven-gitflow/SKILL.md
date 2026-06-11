@@ -81,10 +81,14 @@ If the user's request doesn't reference an existing issue, create one. The
 issue **description must fully capture the task** — a future agent (or person)
 should be able to act on it without re-reading the chat.
 
+Pass the body on **stdin via a quoted heredoc** (`<<'EOF'`) rather than `--body "..."`. The
+description is markdown — code fences, backticks, `$`, quotes — and a quoted heredoc passes all of it
+through literally, where an inline `--body "..."` lets the shell mangle it or end the string early.
+
 ```bash
-gh issue create \
-  --title "<concise imperative title>" \
-  --body "<full task description: context, goal, acceptance criteria>"
+gh issue create --title "<concise imperative title>" --body-file - <<'EOF'
+<full task description: context, goal, acceptance criteria>
+EOF
 ```
 
 If the user pointed at an existing issue (e.g. "work on #42"), read it first
@@ -114,10 +118,14 @@ and visible, not trapped in a chat):
 3. If changes are requested, the planning agent revises in a new comment. Repeat
    until the review agent posts `**Verdict: APPROVED**`.
 
-Post comments with:
+Post comments by piping the body on **stdin via a quoted heredoc** — plans and reviews are full of
+code fences, backticks, and `$`, and `--body "..."` would let the shell expand or truncate them. The
+quoted `<<'EOF'` delimiter disables all expansion, so the markdown lands exactly as written:
 
 ```bash
-gh issue comment <number> --body "<the plan or review>"
+gh issue comment <number> --body-file - <<'EOF'
+<the plan or review — markdown, code blocks, and $vars all literal>
+EOF
 ```
 
 Don't skip the loop even for "small" changes — the review agent approving a
