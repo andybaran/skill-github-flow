@@ -1,6 +1,6 @@
-# issue-driven-gitflow
+# issue-driven-github-flow
 
-[![skills.sh](https://img.shields.io/badge/skills.sh-issue--driven--gitflow-6c47ff)](https://skills.sh/andybaran/skill-gitflow)
+[![skills.sh](https://img.shields.io/badge/skills.sh-issue--driven--github--flow-6c47ff)](https://skills.sh/andybaran/skill-github-flow)
 
 A reusable **agent skill** that enforces a disciplined, **issue-driven GitHub
 Flow**: nothing gets coded until there's a GitHub issue and a *reviewed,
@@ -12,6 +12,14 @@ It's meant to be dropped into any project so the whole team gets the same
 workflow automatically whenever they ask their coding agent to build, fix, or
 ship code.
 
+> **GitHub Flow, not classic Gitflow.** Despite the historical repo name, this
+> skill implements lightweight **GitHub Flow / trunk-based development** (a
+> single `main`, short-lived branches, merge via PR) — *not* Vincent Driessen's
+> classic *Gitflow* with long-lived `develop`/`release`/`hotfix` branches.
+> Driessen himself [now recommends](https://nvie.com/posts/a-successful-git-branching-model/)
+> GitHub Flow for teams doing continuous delivery, which is exactly how coding
+> agents work.
+
 ## Install
 
 Use Vercel's official [`skills`](https://github.com/vercel-labs/skills) CLI,
@@ -19,7 +27,7 @@ invoked as `npx skills`:
 
 ```bash
 # Install into the current project (auto-detects your agent):
-npx skills add andybaran/skill-gitflow
+npx skills add andybaran/skill-github-flow
 ```
 
 That's it — the skill triggers automatically on development requests based on
@@ -79,15 +87,15 @@ standard](https://agentskills.io). It needs no per-tool conversion.
 
 ### Other agents & fallbacks
 
-`npx skills add andybaran/skill-gitflow` covers most agents automatically. To
+`npx skills add andybaran/skill-github-flow` covers most agents automatically. To
 target a specific agent, add `--agent` — e.g. IBM Bob only scans its own path:
 
 ```bash
-npx skills add andybaran/skill-gitflow --agent bob
+npx skills add andybaran/skill-github-flow --agent bob
 ```
 
 As a last resort, this is a plain folder skill: copy
-`skills/issue-driven-gitflow/` into any agent's skills directory (e.g. a
+`skills/issue-driven-github-flow/` into any agent's skills directory (e.g. a
 personal `~/.claude/skills/`).
 
 ## Requirements
@@ -101,14 +109,14 @@ personal `~/.claude/skills/`).
 
 | Path | Purpose |
 |------|---------|
-| `skills/issue-driven-gitflow/SKILL.md` | The workflow the agent follows (the skill itself). |
-| `skills/issue-driven-gitflow/references/agent-prompts.md` | Role prompts for the planning / review / implementation agents. |
-| `skills/issue-driven-gitflow/references/projects.md` | How and when to group issues under a GitHub Project. |
-| `skills/issue-driven-gitflow/scripts/gitflow.sh` | Bundled helper for the mechanical git/gh steps. |
+| `skills/issue-driven-github-flow/SKILL.md` | The workflow the agent follows (the skill itself). |
+| `skills/issue-driven-github-flow/references/agent-prompts.md` | Role prompts for the planning / review / implementation agents. |
+| `skills/issue-driven-github-flow/references/projects.md` | How and when to group issues under a GitHub Project. |
+| `skills/issue-driven-github-flow/scripts/gitflow.sh` | Bundled helper for the mechanical git/gh steps. |
 
 ## The helper script
 
-`skills/issue-driven-gitflow/scripts/gitflow.sh` encapsulates the three fiddly,
+`skills/issue-driven-github-flow/scripts/gitflow.sh` encapsulates the three fiddly,
 repeated steps so branch naming and PR shape can't drift. It validates its
 inputs (rejects a malformed branch name or a non-Conventional commit):
 
@@ -130,7 +138,7 @@ gitflow.sh pr "feat(export): add CSV export for reports" 42
 ## Customizing
 
 The conventions are intentionally explicit in
-`skills/issue-driven-gitflow/SKILL.md` and `gitflow.sh` so you can adapt them to
+`skills/issue-driven-github-flow/SKILL.md` and `gitflow.sh` so you can adapt them to
 a team's house style — branch `type`s, the PR body template, and the >3-issues
 Project threshold are all easy to change in those two files.
 

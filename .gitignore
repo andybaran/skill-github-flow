@@ -1,5 +1,5 @@
 # Eval run outputs (generated artifacts)
-issue-driven-gitflow-workspace/
+issue-driven-github-flow-workspace/
 
 # Legacy packaged artifact (superseded by npx skills distribution)
 *.skill
