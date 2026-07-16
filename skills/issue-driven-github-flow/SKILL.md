@@ -1,5 +1,5 @@
 ---
-name: issue-driven-gitflow
+name: issue-driven-github-flow
 description: >-
   Enforces an issue-driven GitHub Flow with multi-agent planning. Use this skill
   when the user wants to START or CARRY OUT development work in a git repository
@@ -153,7 +153,7 @@ Conventional Commit, and opening a squash-ready PR. It validates its inputs
 instead of landing in history. Reach for it rather than retyping raw `git`/`gh`:
 
 ```bash
-SKILL=path/to/issue-driven-gitflow        # this skill's directory
+SKILL=path/to/issue-driven-github-flow        # this skill's directory
 
 # 1. Branch — syncs the default branch, then cuts type/description off it
 "$SKILL/scripts/gitflow.sh" branch feat/add-csv-export
