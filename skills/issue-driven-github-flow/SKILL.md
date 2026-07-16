@@ -218,6 +218,10 @@ git add -A
 "$SKILL/scripts/gitflow.sh" pr "feat(export): add CSV export for reports" 42
 ```
 
+Move the linked GitHub Project item to **In Progress** after the branch is cut;
+use [projects.md](references/projects.md) for the ID-resolution recipe, and
+no-op cleanly if no Project exists or Project auth is unavailable.
+
 Pick `type` (∈ `feat|fix|chore|docs|refactor|test|perf`) to match the work and a
 hyphenated description that reads cleanly. Prefer issue-numbered branch names:
 `feat/42-oauth-login`, `fix/87-null-deref-on-empty-cart`,
@@ -290,6 +294,10 @@ gh pr checks --watch
 gh pr merge --squash --delete-branch
 ```
 
+Move the linked GitHub Project item to **Done** after the squash merge; use
+[projects.md](references/projects.md) for the ID-resolution recipe, and no-op
+cleanly if no Project exists or Project auth is unavailable.
+
 After merge, sync the default branch and confirm the linked issue closed (the
 `Closes #N` footer does this automatically on merge). If it didn't, close it with
 a comment pointing at the merged PR.
@@ -352,10 +360,12 @@ items across status columns and linking the project to the repo.
 | Multiple independent issues | Use worktrees via [worktrees.md](references/worktrees.md) |
 | Plan written | Hand to review agent; iterate until `Verdict: APPROVED` |
 | Approved plan | Dispatch implementation agent |
+| Step 3 branch cut | Move Project item to **In Progress** via [projects.md](references/projects.md); no-op cleanly if no Project exists or Project auth is unavailable |
 | Code done | Run verification, commit, open a draft PR |
 | Draft PR open | Dispatch 🔬 code-review agent; require a verdict |
 | Critical/Important review finding | Loop back to implementation; re-verify and re-review |
 | PR ready to land | Require human approval and green `gh pr checks` when CI exists |
+| PR squash-merged | Move Project item to **Done** via [projects.md](references/projects.md); no-op cleanly if no Project exists or Project auth is unavailable |
 | PR merged | `--delete-branch`, sync `main`, confirm issue closed |
 | Bad squash merge | `git revert <squash-sha>` on a new branch; open a revert PR |
 | Secret requested | Refuse to commit it; use [security.md](references/security.md) |

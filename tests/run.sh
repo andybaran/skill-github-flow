@@ -19,7 +19,7 @@ trap cleanup EXIT
 assert_contains() {
   file="$1"
   text="$2"
-  if ! grep -Fq "$text" "$file"; then
+  if ! grep -Fq -- "$text" "$file"; then
     echo "--- $file ---" >&2
     cat "$file" >&2
     fail "expected '$text' in $file"
@@ -140,6 +140,26 @@ test_review_package_contains_stat_and_hunks() {
   assert_contains "$outfile" "+review package change"
 }
 
+test_project_status_docs_are_wired_into_workflow() {
+  skill_doc="$ROOT/skills/issue-driven-github-flow/SKILL.md"
+  project_doc="$ROOT/skills/issue-driven-github-flow/references/projects.md"
+
+  assert_contains "$project_doc" 'gh project view <project-number> --owner "@me" --format json'
+  assert_contains "$project_doc" 'gh project field-list <project-number> --owner "@me" --format json'
+  assert_contains "$project_doc" 'gh project item-list <project-number> --owner "@me" --format json'
+  assert_contains "$project_doc" 'gh project item-edit'
+  assert_contains "$project_doc" '--project-id <project-id>'
+  assert_contains "$project_doc" '--single-select-option-id <option-id>'
+  assert_contains "$project_doc" 'Move to **In Progress** when Step 3 cuts the implementation branch'
+  assert_contains "$project_doc" 'Move to **Done** after Step 4 squash-merges the PR'
+  assert_contains "$project_doc" 'If there is no linked Project, treat status updates as a clean no-op'
+
+  assert_contains "$skill_doc" 'Move the linked GitHub Project item to **In Progress**'
+  assert_contains "$skill_doc" 'Move the linked GitHub Project item to **Done**'
+  assert_contains "$skill_doc" '| Step 3 branch cut | Move Project item to **In Progress** via [projects.md](references/projects.md); no-op cleanly if no Project exists or Project auth is unavailable |'
+  assert_contains "$skill_doc" '| PR squash-merged | Move Project item to **Done** via [projects.md](references/projects.md); no-op cleanly if no Project exists or Project auth is unavailable |'
+}
+
 main() {
   rm -rf "$SCRATCH"
   mkdir -p "$SCRATCH"
@@ -151,6 +171,7 @@ main() {
   test_rejects_empty_stage
   test_commit_message_contains_issue_and_coauthor
   test_review_package_contains_stat_and_hunks
+  test_project_status_docs_are_wired_into_workflow
 
   echo "All smoke tests passed"
 }
