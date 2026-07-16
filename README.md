@@ -1,14 +1,31 @@
 # issue-driven-gitflow
 
-A reusable **agent skill** that enforces a
-disciplined, **issue-driven GitHub Flow**: nothing gets coded until there's a
-GitHub issue and a *reviewed, approved plan* for it. Every change lands on a
-short-lived `type/description` branch via a squash-merged PR with Conventional
-Commits — and `main` is never edited directly.
+[![skills.sh](https://skills.sh/b/andybaran/skill-gitflow)](https://skills.sh/andybaran/skill-gitflow)
+
+A reusable **agent skill** that enforces a disciplined, **issue-driven GitHub
+Flow**: nothing gets coded until there's a GitHub issue and a *reviewed,
+approved plan* for it. Every change lands on a short-lived `type/description`
+branch via a squash-merged PR with Conventional Commits — and `main` is never
+edited directly.
 
 It's meant to be dropped into any project so the whole team gets the same
 workflow automatically whenever they ask their coding agent to build, fix, or
 ship code.
+
+## Install
+
+Use Vercel's official [`skills`](https://github.com/vercel-labs/skills) CLI,
+invoked as `npx skills`:
+
+```bash
+# Install into the current project (auto-detects your agent):
+npx skills add andybaran/skill-gitflow
+```
+
+That's it — the skill triggers automatically on development requests based on
+its description; you don't invoke it by name. See [Other agents &
+fallbacks](#other-agents--fallbacks) for Copilot, Cursor, IBM Bob, and manual
+installs.
 
 ## What it does
 
@@ -60,36 +77,18 @@ standard](https://agentskills.io). It needs no per-tool conversion.
   (global). Same `SKILL.md` format; Bob only scans its own `.bob/skills/`
   path.
 
-## Install
+### Other agents & fallbacks
 
-Use Vercel's official `vercel-labs/skills` package, invoked as `npx skills`:
-
-```bash
-# Install into the current project (auto-detects your agent):
-npx skills add andybaran/skill-gitflow
-
-# Install just this skill, or target a specific agent / scope:
-npx skills add andybaran/skill-gitflow --skill issue-driven-gitflow
-```
-
-For IBM Bob, or any agent that only scans its own path, target it explicitly
-(`npx skills add andybaran/skill-gitflow --agent bob`) or copy the folder into
-`.bob/skills/`.
-
-As a fallback, this is a plain folder skill: copy `issue-driven-gitflow/` into
-any agent's skills directory, such as a personal `~/.claude/skills/` directory
-or a project-level skills directory:
+`npx skills add andybaran/skill-gitflow` covers most agents automatically. To
+target a specific agent, add `--agent` — e.g. IBM Bob only scans its own path:
 
 ```bash
-# From a packaged .skill (a zip), choose the directory your agent scans:
-unzip issue-driven-gitflow.skill -d <agent-skills-dir>/
-
-# Or copy the folder directly:
-cp -r issue-driven-gitflow <agent-skills-dir>/
+npx skills add andybaran/skill-gitflow --agent bob
 ```
 
-Then start or reload your agent session. The skill triggers automatically on
-development requests based on its description — you don't invoke it by name.
+As a last resort, this is a plain folder skill: copy
+`skills/issue-driven-gitflow/` into any agent's skills directory (e.g. a
+personal `~/.claude/skills/`).
 
 ## Requirements
 
@@ -102,35 +101,39 @@ development requests based on its description — you don't invoke it by name.
 
 | Path | Purpose |
 |------|---------|
-| `SKILL.md` | The workflow the agent follows (the skill itself). |
-| `references/agent-prompts.md` | Role prompts for the planning / review / implementation agents. |
-| `references/projects.md` | How and when to group issues under a GitHub Project. |
-| `scripts/gitflow.sh` | Bundled helper for the mechanical git/gh steps. |
+| `skills/issue-driven-gitflow/SKILL.md` | The workflow the agent follows (the skill itself). |
+| `skills/issue-driven-gitflow/references/agent-prompts.md` | Role prompts for the planning / review / implementation agents. |
+| `skills/issue-driven-gitflow/references/projects.md` | How and when to group issues under a GitHub Project. |
+| `skills/issue-driven-gitflow/scripts/gitflow.sh` | Bundled helper for the mechanical git/gh steps. |
 
 ## The helper script
 
-`scripts/gitflow.sh` encapsulates the three fiddly, repeated steps so branch
-naming and PR shape can't drift. It validates its inputs (rejects a malformed
-branch name or a non-Conventional commit):
+`skills/issue-driven-gitflow/scripts/gitflow.sh` encapsulates the three fiddly,
+repeated steps so branch naming and PR shape can't drift. It validates its
+inputs (rejects a malformed branch name or a non-Conventional commit):
 
 ```bash
 # 1. Branch — syncs the default branch, then cuts type/description off it
-scripts/gitflow.sh branch feat/add-csv-export
+gitflow.sh branch feat/add-csv-export
 
 #    ...make changes, write & run the automated test, then: git add -A
 
 # 2. Commit — Conventional message + "Closes #42."
-scripts/gitflow.sh commit "feat(export): add CSV export for reports" 42
+gitflow.sh commit "feat(export): add CSV export for reports" 42
 
 # 3. PR — pushes and opens a squash-ready PR (title becomes the squash commit)
-scripts/gitflow.sh pr "feat(export): add CSV export for reports" 42
+gitflow.sh pr "feat(export): add CSV export for reports" 42
 ```
 
 `type` ∈ `feat | fix | chore | docs | refactor | test | perf`.
 
 ## Customizing
 
-The conventions are intentionally explicit in `SKILL.md` and `gitflow.sh` so you
-can adapt them to a team's house style — branch `type`s, the PR body
-template, and the >3-issues Project threshold are all easy to change in those
-two files.
+The conventions are intentionally explicit in
+`skills/issue-driven-gitflow/SKILL.md` and `gitflow.sh` so you can adapt them to
+a team's house style — branch `type`s, the PR body template, and the >3-issues
+Project threshold are all easy to change in those two files.
+
+## License
+
+[MIT](LICENSE)
