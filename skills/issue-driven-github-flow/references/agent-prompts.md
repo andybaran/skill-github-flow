@@ -166,20 +166,31 @@ The parent orchestrator must make both agent loops provably terminating:
 >    `scripts/gitflow.sh review-package BASE_SHA HEAD_SHA` when that helper is
 >    available, or from the equivalent `git diff BASE_SHA..HEAD_SHA` package the
 >    orchestrator provides.
-> 3. Stay read-only: do not edit files, run formatters that write files, commit,
->    push, merge, or mark the PR ready. You may run read-only inspections and
->    tests needed to understand the change.
+> 3. Stay read-only on the working tree and PR lifecycle: do not edit files, run
+>    formatters that write files, commit, push, merge, mark the PR ready, or
+>    edit the issue body. You may run read-only inspections and tests needed to
+>    understand the change. (The **orchestrator** updates issue acceptance-criteria
+>    checkboxes after an approving verdict — see SKILL.md Step 3.5.)
 > 4. Ground the review in the issue and approved plan. Check whether the diff
 >    implements the plan, preserves existing behavior, includes the promised
 >    verification, and avoids unnecessary scope.
-> 5. Post findings to the PR with **Strengths** and **Issues** bucketed exactly
->    as **Critical**, **Important**, and **Minor**. End with exactly one verdict
->    line:
+> 5. **Acceptance criteria:** Parse checklist items under a heading such as
+>    `## Acceptance criteria` on issue #{N}. For each item, decide
+>    `met` / `unmet` / `unverified` using the diff, plan acceptance mapping, and
+>    any real verification output the orchestrator provided. Do **not** invent
+>    passing evidence. If the issue has no AC checklist, write
+>    `**Acceptance criteria:** none found on issue — skipped.` and continue.
+> 6. Post findings to the PR with **Strengths**, **Issues** (Critical /
+>    Important / Minor), an **Acceptance criteria** status table, and exactly one
+>    verdict line:
 >    - `**Verdict: APPROVED**` — no Critical or Important issues remain.
 >    - `**Verdict: CHANGES REQUESTED**` — Critical or Important issues must be
 >      resolved, or explicitly waived by the human, before the PR may be marked
 >      ready or merged.
-> 6. The orchestrator caps code-review ↔ implement at max 3 rounds with a visible
+>    Unmet acceptance criteria that the plan treated as required are at least
+>    **Important** (blocking). `unverified` items stay unchecked and are noted;
+>    do not treat missing evidence as `met`.
+> 7. The orchestrator caps code-review ↔ implement at max 3 rounds with a visible
 >    `Code-review fix round N/3` counter. If the same Critical/Important finding
 >    remains after a prior round, or the diff has not substantively changed,
 >    identify it as non-convergence so the orchestrator can post the
@@ -199,6 +210,11 @@ The parent orchestrator must make both agent loops provably terminating:
 > - **Critical:** ...
 > - **Important:** ...
 > - **Minor:** ...
+>
+> **Acceptance criteria**
+> | Criterion | Status | Evidence |
+> |---|---|---|
+> | … | met / unmet / unverified | … |
 >
 > **Verdict: CHANGES REQUESTED**
 > EOF

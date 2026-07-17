@@ -278,11 +278,15 @@ before any later `git add -A` / commit in the re-review loop, or choose an
 explicit output path outside the working tree when your environment provides one.
 
 The code-review agent posts a PR review with `**Verdict: APPROVED**` or
-`**Verdict: CHANGES REQUESTED**`.
+`**Verdict: CHANGES REQUESTED**`, including an **Acceptance criteria** status
+table (`met` / `unmet` / `unverified`) when the linked issue has a checklist
+under a heading such as `## Acceptance criteria`. If the issue has no such
+checklist, the review notes that ACs were skipped.
 
 - **Critical** or **Important** findings are blocking. They loop back to the
   implementation agent for the smallest safe fix, followed by the relevant
-  verification and another code-review pass.
+  verification and another code-review pass. Required acceptance criteria marked
+  `unmet` are at least Important.
 - **Minor** findings are non-blocking unless the human decides otherwise.
 - The implementer uses [receiving-code-review.md](references/receiving-code-review.md)
   to triage feedback rigorously rather than blindly applying suggestions.
@@ -306,6 +310,25 @@ The code-review agent posts a PR review with `**Verdict: APPROVED**` or
   the blockers.
 - The human gives final merge approval. An agent may prepare the PR, but it does
   not override human approval.
+
+### Acceptance criteria checkoff (orchestrator)
+
+After a code-review verdict of `**Verdict: APPROVED**` (or after the human
+explicitly waives all blocking findings), the **orchestrator** — not the
+code-review agent — updates the linked issue’s acceptance-criteria checkboxes:
+
+1. Read the issue body and the review’s **Acceptance criteria** table.
+2. For each criterion marked `met`, set the matching checklist item to `- [x]`.
+3. Leave `unmet` and `unverified` items as `- [ ]`. Never check a box without
+   evidence from the review table.
+4. If the issue has no Acceptance criteria section, skip and note that in the
+   PR or issue comment (no body edit required).
+5. Prefer a surgical body edit (only flip the relevant `[ ]` → `[x]` lines). Do
+   not rewrite unrelated issue sections.
+
+This is the **only** issue-body write allowed as part of code review follow-up.
+The code-review agent itself stays read-only on the working tree and must not
+edit the issue.
 
 Only after no Critical or Important findings remain — or the human explicitly
 waives them on the PR — may the PR be marked ready:
@@ -366,6 +389,9 @@ A change is done only when all of these are true:
 - A draft PR exists with a Conventional Commit title and `Closes #N`.
 - The 🔬 code-review step produced an approving verdict, or all Critical /
   Important findings were fixed or explicitly waived by the human.
+- The review included an Acceptance criteria status table (or an explicit
+  “none found — skipped” note), and the orchestrator checked off every `met`
+  criterion on the issue when an AC checklist exists.
 - CI is green when the repository has CI (`gh pr checks`).
 - The [PR template checklist](../../.github/pull_request_template.md) is complete,
   including code review, tests/CI, no secrets, and squash-merge intent.
@@ -400,7 +426,8 @@ items across status columns and linking the project to the repo.
 | Approved plan | Dispatch implementation agent |
 | Step 3 branch cut | Move Project item to **In Progress** via [projects.md](references/projects.md); no-op cleanly if no Project exists or Project auth is unavailable |
 | Code done | Run verification, commit, open a draft PR |
-| Draft PR open | Dispatch 🔬 code-review agent; require a verdict |
+| Draft PR open | Dispatch 🔬 code-review agent; require a verdict + AC status table |
+| Code review APPROVED | Orchestrator checks off `met` acceptance criteria on the issue (skip if no AC checklist) |
 | Implementer reports `BLOCKED` / `NEEDS_CONTEXT` | Stop the loop immediately; post the blocker/context gap and hand off to the human |
 | Critical/Important review finding | Loop back to implementation with visible `Code-review fix round N/3`; re-verify and re-review, but stop after max 3 rounds or no-progress and escalate |
 | PR ready to land | Require human approval and green `gh pr checks` when CI exists |
